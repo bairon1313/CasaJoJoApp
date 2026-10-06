@@ -16,11 +16,12 @@ import com.casajojo.app.ui.components.PlatoMock
 fun CarritoScreen(
     onVolverClick: () -> Unit
 ) {
-    // Variables de estado para los datos de retiro
+    // Variables de estado para los datos del cliente y retiro
     var nombreCliente by remember { mutableStateOf("") }
     var telefonoContacto by remember { mutableStateOf("") }
+    var horaRetiro by remember { mutableStateOf("") }
 
-    // Platos de ejemplo para visualizar la estructura del resumen
+    // Platos de ejemplo tomados de PlatoMock
     val listaPedido = remember { PlatoMock.listaPlatos.take(2) }
     val totalPedido = remember { listaPedido.sumOf { it.precio } }
 
@@ -48,7 +49,8 @@ fun CarritoScreen(
         ) {
             Text(
                 text = "Detalle de Productos",
-                style = MaterialTheme.typography.titleLarge
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
             )
 
             // Lista de platos seleccionados
@@ -65,12 +67,21 @@ fun CarritoScreen(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            Text(text = plato.nombre, style = MaterialTheme.typography.bodyLarge)
-                            Text(text = plato.categoria, style = MaterialTheme.typography.bodySmall)
+                            Text(
+                                text = plato.nombre,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Medium
+                            )
+                            Text(
+                                text = plato.categoria,
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                         Text(
                             text = "$${plato.precio}",
                             style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -81,7 +92,8 @@ fun CarritoScreen(
             // Fila con el cálculo del total
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Total a Pagar:",
@@ -90,7 +102,7 @@ fun CarritoScreen(
                 )
                 Text(
                     text = "$$totalPedido",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -100,10 +112,11 @@ fun CarritoScreen(
 
             Text(
                 text = "Datos para el Retiro en Local",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold
             )
 
-            // Campos para datos del cliente
+            // Campos para datos del cliente y hora de retiro
             OutlinedTextField(
                 value = nombreCliente,
                 onValueChange = { nombreCliente = it },
@@ -120,10 +133,22 @@ fun CarritoScreen(
                 singleLine = true
             )
 
+            OutlinedTextField(
+                value = horaRetiro,
+                onValueChange = { horaRetiro = it },
+                label = { Text("Hora estimada de retiro (ej. 14:30)") },
+                modifier = Modifier.fillMaxWidth(),
+                singleLine = true
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
             // Botón de acción principal
             Button(
-                onClick = { /* Se conectará con la base de datos/ViewModel */ },
-                modifier = Modifier.fillMaxWidth()
+                onClick = { /* Se conectará con el ViewModel y Room DB */ },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
             ) {
                 Text("Confirmar Pedido")
             }

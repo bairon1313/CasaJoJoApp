@@ -22,10 +22,14 @@ fun AppNavigation() {
             )
         }
         composable(Screen.Home.route) {
-            HomeScreen()
+            HomeScreen(
+                onVerCarritoClick = { navController.navigate(Screen.Carrito.route) }
+            )
         }
         composable(Screen.Carrito.route) {
-            CarritoScreen()
+            CarritoScreen(
+                onVolverClick = { navController.popBackStack() }
+            )
         }
         composable(Screen.Caja.route) {
             CajaScreen()
