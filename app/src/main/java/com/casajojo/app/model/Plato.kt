@@ -5,5 +5,5 @@ data class Plato (
     val nombre: String,
     val descripcion: String,
     val categoria: String,    // FONDO, ACOMPAÑAMIENTO, ENSALADA, POSTRE, BEBIDA
-    val disponible: Boolean=True
+    val disponible: Boolean=true
 )
