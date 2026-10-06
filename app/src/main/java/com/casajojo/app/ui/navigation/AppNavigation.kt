@@ -1,12 +1,10 @@
 package com.casajojo.app.ui.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.casajojo.app.ui.screens.CarritoScreen
-import com.casajojo.app.ui.screens.HomeScreen
+import com.casajojo.app.ui.screens.*
 
 @Composable
 fun AppNavigation() {
@@ -14,20 +12,26 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route
+        startDestination = Screen.Login.route
     ) {
-        composable(Screen.Home.route) {
-            HomeScreen(
-                onVerCarritoClick = { navController.navigate(Screen.Carrito.route) }
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onNavigateToCliente = { navController.navigate(Screen.Home.route) },
+                onNavigateToCaja = { navController.navigate(Screen.Caja.route) },
+                onNavigateToAdmin = { navController.navigate(Screen.Admin.route) }
             )
+        }
+        composable(Screen.Home.route) {
+            HomeScreen()
         }
         composable(Screen.Carrito.route) {
-            CarritoScreen(
-                onVolverClick = { navController.popBackStack() }
-            )
+            CarritoScreen()
         }
         composable(Screen.Caja.route) {
-            Text(text = "Pantalla Caja / Administración")
+            CajaScreen()
+        }
+        composable(Screen.Admin.route) {
+            AdminScreen()
         }
     }
 }

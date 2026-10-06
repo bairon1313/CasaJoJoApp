@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.casajojo.app.model.PlatoMock
+import com.casajojo.app.ui.components.PlatoMock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

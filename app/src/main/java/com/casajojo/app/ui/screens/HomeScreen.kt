@@ -1,57 +1,37 @@
-package com.casajojo.app.ui.screens
+package com.casajojo.app.ui.navigation
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.casajojo.app.model.PlatoMock
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun HomeScreen(
-    onVerCarritoClick: () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Menú Casa JoJo") }
-            )
-        },
-        floatingActionButton = {
-            ExtendedFloatingActionButton(
-                onClick = onVerCarritoClick
-            ) {
-                Text(text = "Ver Pedido")
-            }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            Text(
-                text = "Catálogo de Platos",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(vertical = 12.dp)
-            )
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.casajojo.app.ui.screens.*
 
-            LazyColumn(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Ahora lee directo desde el objeto PlatoMock
-                items(PlatoMock.listaPlatos) { plato ->
-                    PlatoItem(
-                        plato = plato,
-                        onAgregarClick = { platoSeleccionado ->
-                            // Se conectará al ViewModel más adelante
-                        }
-                    )
-                }
-            }
+@Composable
+fun AppNavigation() {
+    val navController = rememberNavController()
+
+    NavHost(
+        navController = navController,
+        startDestination = Screen.Login.route
+    ) {
+        composable(Screen.Login.route) {
+            LoginScreen(
+                onNavigateToCliente = { navController.navigate(Screen.Home.route) },
+                onNavigateToCaja = { navController.navigate(Screen.Caja.route) },
+                onNavigateToAdmin = { navController.navigate(Screen.Admin.route) }
+            )
+        }
+        composable(Screen.Home.route) {
+            HomeScreen()
+        }
+        composable(Screen.Carrito.route) {
+            CarritoScreen()
+        }
+        composable(Screen.Caja.route) {
+            CajaScreen()
+        }
+        composable(Screen.Admin.route) {
+            AdminScreen()
         }
     }
 }
