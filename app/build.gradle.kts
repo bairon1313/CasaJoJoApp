@@ -55,4 +55,5 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     // Navegación en Jetpack Compose
     implementation("androidx.navigation:navigation-compose:2.8.5")
+    implementation("androidx.compose.material:material-icons-extended")
 }

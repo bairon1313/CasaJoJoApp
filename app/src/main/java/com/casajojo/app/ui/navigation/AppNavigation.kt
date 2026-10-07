@@ -1,10 +1,16 @@
 package com.casajojo.app.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.casajojo.app.ui.screens.*
+import androidx.navigation.navArgument
+import com.casajojo.app.ui.screens.HomeScreen
+import com.casajojo.app.ui.screens.LoginScreen
+import java.net.URLEncoder
+import java.net.URLDecoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun AppNavigation() {
@@ -12,30 +18,57 @@ fun AppNavigation() {
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Login.route
+        startDestination = "login"
     ) {
-        composable(Screen.Login.route) {
+        composable("login") {
             LoginScreen(
-                onNavigateToCliente = { navController.navigate(Screen.Home.route) },
-                onNavigateToCaja = { navController.navigate(Screen.Caja.route) },
-                onNavigateToAdmin = { navController.navigate(Screen.Admin.route) }
+                onNavigateToCliente = { nombre, telefono ->
+                    // Codificamos el nombre para soportar espacios y tildes
+                    val nombreEncoded = URLEncoder.encode(nombre, StandardCharsets.UTF_8.toString())
+                    navController.navigate("home_cliente/$nombreEncoded/$telefono")
+                },
+                onNavigateToCaja = {
+                    //RUTA PARA CAJA CUANDO LA CREEMOS
+                },
+                onNavigateToAdmin = {
+                    //RUTA PARA ADMIN CUANDO LA CREEMOS
+                }
             )
         }
-        composable(Screen.Home.route) {
+        //MENU DEL CLIENTE (HOME)
+        composable(
+            route = "home_cliente/{nombre}/{telefono}",
+            arguments = listOf(
+                navArgument("nombre"){type= NavType.StringType },
+                navArgument("telefono"){type= NavType.StringType}
+            )
+        ) { backStackEntry ->
+            // Decodificamos los datos recibidos
+            val nombreRaw = backStackEntry.arguments?.getString("nombre") ?: ""
+            val nombreDecoded = URLDecoder.decode(nombreRaw, StandardCharsets.UTF_8.toString())
+            val telefono = backStackEntry.arguments?.getString("telefono") ?: ""
+
+            // Carga la pantalla principal del cliente pasando sus datos
             HomeScreen(
-                onVerCarritoClick = { navController.navigate(Screen.Carrito.route) }
+                nombreCliente = nombreDecoded,
+                telefonoCliente = telefono,
+                onVerCarritoClick = {
+                    navController.navigate("carrito")
+                }
             )
         }
-        composable(Screen.Carrito.route) {
-            CarritoScreen(
-                onVolverClick = { navController.popBackStack() }
-            )
+
+        // 3. PANTALLAS SECUNDARIAS (Rutas simples)
+        composable("carrito") {
+            // Reemplazarás esto cuando crees CarritoScreen()
         }
-        composable(Screen.Caja.route) {
-            CajaScreen()
+
+        composable("caja") {
+            // Reemplazarás esto cuando crees CajaScreen()
         }
-        composable(Screen.Admin.route) {
-            AdminScreen()
+
+        composable("admin") {
+            // Reemplazarás esto cuando crees AdminScreen()
         }
     }
 }

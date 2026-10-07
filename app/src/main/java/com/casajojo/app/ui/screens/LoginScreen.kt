@@ -1,4 +1,10 @@
 package com.casajojo.app.ui.screens
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,13 +24,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.casajojo.app.R
 import com.casajojo.app.ui.theme.*
+import androidx.compose.ui.text.TextStyle
 
 @Composable
 fun LoginScreen(
-    onNavigateToCliente: () -> Unit,
+    onNavigateToCliente: (nombre:String,telefono:String) -> Unit,
     onNavigateToCaja: () -> Unit,
     onNavigateToAdmin: () -> Unit
 ) {
+    // ESTADOS PARA EL MODAL Y VALIDACIÓN
+    var showClienteDialog by remember { mutableStateOf(false) }
+    var nombreCliente by remember { mutableStateOf("") }
+    var telefonoCliente by remember { mutableStateOf("") }
+    var errorMensaje by remember { mutableStateOf<String?>(null) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -99,7 +112,7 @@ fun LoginScreen(
 
                     // Botón Cliente
                     Button(
-                        onClick = onNavigateToCliente,
+                        onClick = { showClienteDialog = true },
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(50.dp),
@@ -152,6 +165,134 @@ fun LoginScreen(
                     }
                 }
             }
+        }
+        // VENTANA POP-UP PARA INGRESO DE DATOS DEL CLIENTE
+        if (showClienteDialog) {
+            AlertDialog(
+                onDismissRequest = { showClienteDialog = false },
+                containerColor = DarkSurface,
+                title = {
+                    Text(
+                        text = "Datos del Cliente",
+                        color = TextWhite,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
+                },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        Text(
+                            text = "Ingresa tu información para registrar tu comanda o pedido",
+                            color = TextMuted,
+                            fontSize = 14.sp
+                        )
+
+                        // Campo Nombre Completo
+                        OutlinedTextField(
+                            value = nombreCliente,
+                            onValueChange = { nombreCliente = it },
+                            label = { Text("Nombre completo") },
+                            placeholder = {Text("Juan Perez", color = TextMuted)},
+                            singleLine = true,
+                            textStyle = TextStyle(
+                                color = OrangePrimary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = OrangePrimary,
+                                unfocusedBorderColor = TextMuted,
+                                focusedLabelColor = OrangePrimary,
+                                unfocusedLabelColor = TextMuted,
+                                focusedTextColor = TextWhite,
+                                unfocusedTextColor = TextWhite
+                            )
+                        )
+
+                        // Campo Teléfono (Solo permite dígitos)
+                        OutlinedTextField(
+                            value = telefonoCliente,
+                            onValueChange = { entrada ->
+                                // Filtrar para que solo acepte números
+                                if (entrada.all { it.isDigit() } && entrada.length <= 8) {
+                                    telefonoCliente = entrada
+                                }
+                            },
+                            label = { Text("Teléfono") },
+                            prefix = {
+                                Text(
+                                    text = "+569 ",
+                                    color=OrangePrimary,
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 16.sp
+                                )
+                            },
+                            placeholder = {Text("12345678", color = TextMuted)},
+                            singleLine = true,
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+                            textStyle = TextStyle(
+                                color = OrangePrimary,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 16.sp
+                            ),
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = OrangePrimary,
+                                unfocusedBorderColor = TextMuted,
+                                focusedLabelColor = OrangePrimary,
+                                unfocusedLabelColor = TextMuted,
+                                focusedTextColor = TextWhite,
+                                unfocusedTextColor = TextWhite
+                            )
+                        )
+
+                        // Mensaje de Error si la validación falla
+                        errorMensaje?.let { mensaje ->
+                            Text(
+                                text = mensaje,
+                                color = ErrorRed,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            // LÓGICA DE VALIDACIÓN
+                            val nombreLimpio = nombreCliente.trim()
+                            val telefonoLimpio = telefonoCliente.trim()
+
+                            when {
+                                nombreLimpio.length < 10 -> {
+                                    errorMensaje = "Por favor, ingresa un nombre completo válido."
+                                }
+                                telefonoLimpio.length < 8 || telefonoLimpio.length > 9 -> {
+                                    errorMensaje = "El numero de teléfono debe ser valido."
+                                }
+                                else -> {
+                                    errorMensaje = null
+                                    showClienteDialog = false
+                                    // Navega a la siguiente pantalla enviando los datos
+                                    onNavigateToCliente(nombreLimpio, telefonoLimpio)
+                                }
+                            }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary)
+                    ) {
+                        Text("Ingresar", color = DarkBackground, fontWeight = FontWeight.Bold)
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showClienteDialog = false }) {
+                        Text("Cancelar", color = TextMuted)
+                    }
+                }
+            )
         }
     }
 }
