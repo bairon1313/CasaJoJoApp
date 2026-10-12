@@ -1,5 +1,6 @@
 package com.casajojo.app.ui.navigation
 
+import com.casajojo.app.ui.screens.AdminScreen
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -7,12 +8,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.casajojo.app.ui.screens.AdminScreen
 import com.casajojo.app.ui.screens.HomeScreen
 import com.casajojo.app.ui.screens.LoginScreen
-import com.casajojo.app.ui.viewmodel.MenuViewModel
-import java.net.URLDecoder
 import java.net.URLEncoder
+import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
 @Composable
@@ -34,7 +33,7 @@ fun AppNavigation() {
                     //RUTA PARA CAJA CUANDO LA CREEMOS
                 },
                 onNavigateToAdmin = {
-                    navController.navigate("admin")
+                    //RUTA PARA ADMIN CUANDO LA CREEMOS
                 }
             )
         }
@@ -71,8 +70,7 @@ fun AppNavigation() {
         }
 
         composable("admin") {
-            val menuViewModel: MenuViewModel = viewModel()
-            AdminScreen(viewModel = menuViewModel)
+            // RazarAdmeen()
         }
     }
 }

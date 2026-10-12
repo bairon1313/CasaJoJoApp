@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,19 +26,19 @@ import androidx.compose.ui.unit.sp
 import com.casajojo.app.R
 import com.casajojo.app.ui.theme.*
 import androidx.compose.ui.text.TextStyle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.casajojo.app.viewmodel.ClienteViewModel
 
 @Composable
 fun LoginScreen(
+    clienteViewModel: ClienteViewModel = viewModel(),
     onNavigateToCliente: (nombre:String,telefono:String) -> Unit,
     onNavigateToCaja: () -> Unit,
     onNavigateToAdmin: () -> Unit
 ) {
     // ESTADOS PARA EL MODAL Y VALIDACIÓN
     var showClienteDialog by remember { mutableStateOf(false) }
-    var nombreCliente by remember { mutableStateOf("") }
-    var telefonoCliente by remember { mutableStateOf("") }
-    var errorMensaje by remember { mutableStateOf<String?>(null) }
-
+    val estadoCliente by clienteViewModel.estado.collectAsState() //LECTURA DE TU VIEWMODEL
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -191,9 +192,13 @@ fun LoginScreen(
 
                         // Campo Nombre Completo
                         OutlinedTextField(
-                            value = nombreCliente,
-                            onValueChange = { nombreCliente = it },
+                            value = estadoCliente.nombre,
+                            onValueChange = { clienteViewModel.onNombreChange(it) },
                             label = { Text("Nombre completo") },
+                            isError = estadoCliente.errores.nombre != null,
+                            supportingText = { estadoCliente.errores.nombre?.let{
+                                mensaje -> Text(text = mensaje, color = ErrorRed, fontSize = 12.sp, fontWeight = FontWeight.Bold) }
+                            },
                             placeholder = {Text("Juan Perez", color = TextMuted)},
                             singleLine = true,
                             textStyle = TextStyle(
@@ -208,20 +213,28 @@ fun LoginScreen(
                                 focusedLabelColor = OrangePrimary,
                                 unfocusedLabelColor = TextMuted,
                                 focusedTextColor = TextWhite,
-                                unfocusedTextColor = TextWhite
+                                unfocusedTextColor = TextWhite,
+                                errorBorderColor = ErrorRed,
+                                errorLabelColor = ErrorRed
                             )
                         )
 
                         // Campo Teléfono (Solo permite dígitos)
                         OutlinedTextField(
-                            value = telefonoCliente,
+                            value = estadoCliente.telefono,
                             onValueChange = { entrada ->
                                 // Filtrar para que solo acepte números
                                 if (entrada.all { it.isDigit() } && entrada.length <= 8) {
-                                    telefonoCliente = entrada
+                                    clienteViewModel.onTelefonoChange(entrada)
                                 }
                             },
                             label = { Text("Teléfono") },
+                            isError = estadoCliente.errores.telefono != null,
+                            supportingText = {
+                                estadoCliente.errores.telefono?.let { mensaje ->
+                                    Text(text = mensaje, color = ErrorRed, fontSize = 12.sp, fontWeight = FontWeight.Bold)
+                                }
+                            },
                             prefix = {
                                 Text(
                                     text = "+569 ",
@@ -245,42 +258,22 @@ fun LoginScreen(
                                 focusedLabelColor = OrangePrimary,
                                 unfocusedLabelColor = TextMuted,
                                 focusedTextColor = TextWhite,
-                                unfocusedTextColor = TextWhite
+                                unfocusedTextColor = TextWhite,
+                                errorBorderColor = ErrorRed,
+                                errorLabelColor = ErrorRed
                             )
                         )
-
-                        // Mensaje de Error si la validación falla
-                        errorMensaje?.let { mensaje ->
-                            Text(
-                                text = mensaje,
-                                color = ErrorRed,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
                     }
                 },
+
                 confirmButton = {
                     Button(
                         onClick = {
-                            // LÓGICA DE VALIDACIÓN
-                            val nombreLimpio = nombreCliente.trim()
-                            val telefonoLimpio = telefonoCliente.trim()
-
-                            when {
-                                nombreLimpio.length < 10 -> {
-                                    errorMensaje = "Por favor, ingresa un nombre completo válido."
-                                }
-                                telefonoLimpio.length < 8 || telefonoLimpio.length > 9 -> {
-                                    errorMensaje = "El numero de teléfono debe ser valido."
-                                }
-                                else -> {
-                                    errorMensaje = null
-                                    showClienteDialog = false
-                                    // Navega a la siguiente pantalla enviando los datos
-                                    onNavigateToCliente(nombreLimpio, telefonoLimpio)
-                                }
+                            if (clienteViewModel.validarFormulario()){
+                                showClienteDialog = false
+                                onNavigateToCliente(estadoCliente.nombre.trim(), estadoCliente.telefono.trim())
                             }
+
                         },
                         colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary)
                     ) {
