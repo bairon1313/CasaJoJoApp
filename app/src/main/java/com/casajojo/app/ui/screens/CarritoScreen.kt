@@ -9,21 +9,32 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.casajojo.app.ui.components.PlatoMock
+
+import com.casajojo.app.viewmodel.ClienteViewModel
+import com.casajojo.app.viewmodel.MenuViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarritoScreen(
-    onVolverClick: () -> Unit
-) {
-    // Variables de estado para los datos del cliente y retiro
-    var nombreCliente by remember { mutableStateOf("") }
-    var telefonoContacto by remember { mutableStateOf("") }
+    clienteViewModel: ClienteViewModel,
+    menuViewModel: MenuViewModel,
+    onVolverClick: () -> Unit) {
+
+//-- Estados reactivos en tiempo real
+    val estadoCliente by clienteViewModel.estado.collectAsState()
+    val estadoMenu by menuViewModel.estado.collectAsState()
+
+//--Variable local solo para la hora de retiro (se podría mover al ViewModel más adelante para RF04)
     var horaRetiro by remember { mutableStateOf("") }
 
-    // Platos de ejemplo tomados de PlatoMock
-    val listaPedido = remember { PlatoMock.listaPlatos.take(2) }
-    val totalPedido = remember { listaPedido.sumOf { it.precio } }
+//--Consolidacion dinamica de platos seleccionados eliminando los nulos
+    val listaPedido = listOfNotNull(
+        estadoMenu.platoFondo1,
+        estadoMenu.platoFondo2,
+        estadoMenu.acompanamiento1,
+        estadoMenu.acompanamiento2,
+        estadoMenu.ensalada
+    )
 
     Scaffold(
         topBar = {
@@ -78,8 +89,9 @@ fun CarritoScreen(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
                         }
+                        val precioMostrar = if (plato.categoria == "ENSALADA" && estadoMenu.porcionDobleEnsalada) plato.precio * 2 else plato.precio
                         Text(
-                            text = "$${plato.precio}",
+                            text = "$${precioMostrar}",
                             style = MaterialTheme.typography.bodyLarge,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.primary
@@ -101,7 +113,7 @@ fun CarritoScreen(
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "$$totalPedido",
+                    text = "$${estadoMenu.precioTotal}",
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
@@ -118,16 +130,16 @@ fun CarritoScreen(
 
             // Campos para datos del cliente y hora de retiro
             OutlinedTextField(
-                value = nombreCliente,
-                onValueChange = { nombreCliente = it },
+                value = estadoCliente.nombre,
+                onValueChange = { clienteViewModel.onNombreChange(it) },
                 label = { Text("Nombre de quien retira") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
             )
 
             OutlinedTextField(
-                value = telefonoContacto,
-                onValueChange = { telefonoContacto = it },
+                value = estadoCliente.telefono,
+                onValueChange = { clienteViewModel.onTelefonoChange(it) },
                 label = { Text("Teléfono de contacto") },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true
