@@ -5,6 +5,7 @@ import com.casajojo.app.model.ClienteErrores
 import com.casajojo.app.model.ClienteUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 
@@ -13,7 +14,7 @@ class ClienteViewModel : ViewModel() {
     private  val _estado = MutableStateFlow(ClienteUiState())
 
 //-- Estado público de solo lectura para la interfaz visual (Al ser de tipo StateFlow, la pantalla solo puede observar y leer)
-    val estado: StateFlow<ClienteUiState> = _estado
+    val estado: StateFlow<ClienteUiState> = _estado.asStateFlow()
 
 //-- Actualiza el nombre ya digitado y limpia su mensaje de error activo
     fun onNombreChange(valor : String){

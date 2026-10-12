@@ -71,7 +71,9 @@ class MenuViewModel : ViewModel() {
         _estado.update { actual ->
             val limpio = actual.copy(
                 tipoCombinacion = nuevaOpcion,
+                platoFondo1 = if (nuevaOpcion == OpcionMenu.SOLO_ENSALADA || nuevaOpcion == OpcionMenu.DOBLE_ACOMPANAMIENTO) null else actual.platoFondo1,
                 platoFondo2 = if (nuevaOpcion == OpcionMenu.DOBLE_PROTEINA) actual.platoFondo2 else null,
+                acompanamiento1 = if (nuevaOpcion == OpcionMenu.SOLO_ENSALADA || nuevaOpcion == OpcionMenu.DOBLE_PROTEINA) null else actual.acompanamiento1,
                 acompanamiento2 = if (nuevaOpcion == OpcionMenu.DOBLE_ACOMPANAMIENTO) actual.acompanamiento2 else null
             )
             limpio.copy(precioTotal = calcularTotal(limpio))
