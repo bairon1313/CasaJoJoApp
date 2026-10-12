@@ -33,7 +33,7 @@ fun AppNavigation() {
                     //RUTA PARA CAJA CUANDO LA CREEMOS
                 },
                 onNavigateToAdmin = {
-                    //RUTA PARA ADMIN CUANDO LA CREEMOS
+                    navController.navigate("admin")
                 }
             )
         }
@@ -70,7 +70,7 @@ fun AppNavigation() {
         }
 
         composable("admin") {
-            // RazarAdmeen()
+            AdminScreen(viewModel = viewModel())
         }
     }
 }

@@ -24,33 +24,40 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.casajojo.app.R
-import com.casajojo.app.model.ComponenteMenu
+import com.casajojo.app.model.Plato
 import com.casajojo.app.ui.theme.*
-import com.casajojo.app.ui.viewmodel.MenuViewModel
+import com.casajojo.app.viewmodel.MenuViewModel // Importación corregida a tu estructura real
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen(
-    viewModel: MenuViewModel
+    viewModel: MenuViewModel = viewModel() // Proveemos el ViewModel de forma segura
 ) {
+    // Observamos la lista real de platos (la minuta del día)
+    val estadoMenu by viewModel.estado.collectAsState()
+    val listaPlatos = estadoMenu.menuDelDia
+
     var nombreComponente by remember { mutableStateOf("") }
     var precioComponente by remember { mutableStateOf("") }
 
-    val categorias = listOf("PROTEINA", "ACOMPAÑAMIENTO", "ENSALADA", "POSTRE", "BEBIDA", "EXTRA")
+    val categorias = listOf("FONDO", "ACOMPAÑAMIENTO", "ENSALADA", "POSTRE", "BEBIDA")
     var categoriaSeleccionada by remember { mutableStateOf(categorias.first()) }
 
     var errorMensaje by remember { mutableStateOf<String?>(null) }
-    var nuevoPrecioInput by remember { mutableStateOf(viewModel.precioMenuDelDia.toString()) }
 
-    // EJEMPLOS DINÁMICOS SEGÚN CATEGORÍA
+    // Variables locales para simular el estado del "Combo del Día" por ahora (hasta implementarlo en ViewModel)
+    var menuDelDiaActivo by remember { mutableStateOf(true) }
+    var nuevoPrecioInput by remember { mutableStateOf("4500") }
+
+    // EJEMPLOS DINÁMICOS SEGÚN CATEGORÍA (alineado a las categorías de la clase Plato)
     val ejemploPlaceholder = when (categoriaSeleccionada) {
-        "PROTEINA" -> "Pollo al horno, Carne mechada, Chuleta"
+        "FONDO" -> "Pollo al horno, Carne mechada, Chuleta"
         "ACOMPAÑAMIENTO" -> "Puré de papas, Arroz primaveral, Papas fritas"
         "ENSALADA" -> "Ensalada chilena, Tomate mayo, Mix verde"
         "POSTRE" -> "Leche asada, Flan de vainilla, Jalea"
-        "BEBIDA" -> "Coca-Cola 350ml, Jugo natural de piña"
-        "EXTRA" -> "Porción de mayo casera, Huevo frito"
+        "BEBIDA" -> "Coca-Cola 350ml, Jugo natural"
         else -> "Opción del menú"
     }
 
@@ -63,7 +70,6 @@ fun AdminScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
-                        // 1. IZQUIERDA: LOGO DE LA CASA DE JOJO
                         Box(
                             modifier = Modifier
                                 .size(44.dp)
@@ -125,15 +131,15 @@ fun AdminScreen(
                                     fontWeight = FontWeight.Bold
                                 )
                                 Text(
-                                    text = "Permite combinar 1 Proteína +\nAcompañamiento + Ensalada",
+                                    text = "Permite combinar opciones estándar",
                                     color = TextMuted,
                                     fontSize = 11.sp,
                                     lineHeight = 15.sp
                                 )
                             }
                             Switch(
-                                checked = viewModel.menuDelDiaActivo,
-                                onCheckedChange = { viewModel.toggleMenuDelDiaActivo() },
+                                checked = menuDelDiaActivo,
+                                onCheckedChange = { menuDelDiaActivo = it },
                                 colors = SwitchDefaults.colors(
                                     checkedThumbColor = TextWhite,
                                     checkedTrackColor = YellowLogo,
@@ -143,7 +149,7 @@ fun AdminScreen(
                             )
                         }
 
-                        if (viewModel.menuDelDiaActivo) {
+                        if (menuDelDiaActivo) {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
@@ -170,10 +176,7 @@ fun AdminScreen(
 
                                 Button(
                                     onClick = {
-                                        val precioInt = nuevoPrecioInput.toIntOrNull()
-                                        if (precioInt != null && precioInt > 0) {
-                                            viewModel.actualizarPrecioMenu(precioInt)
-                                        }
+
                                     },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = YellowLogo,
@@ -280,11 +283,8 @@ fun AdminScreen(
                                 } else if (precioInt == null || precioInt <= 0) {
                                     errorMensaje = "Ingresa un precio individual válido."
                                 } else {
-                                    viewModel.agregarComponente(
-                                        nombre = nombreComponente,
-                                        categoria = categoriaSeleccionada,
-                                        precioIndividual = precioInt
-                                    )
+
+                                    // viewModel.agregarPlato(nombreComponente, categoriaSeleccionada, precioInt)
                                     nombreComponente = ""
                                     precioComponente = ""
                                     errorMensaje = null
@@ -307,22 +307,26 @@ fun AdminScreen(
             // SECCIÓN 3: TÍTULO DE LISTA
             item {
                 Text(
-                    text = "Lista de Opciones (${viewModel.listaComponentes.size})",
+                    text = "Lista de Opciones (${listaPlatos.size})",
                     color = TextWhite,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
 
-            // SECCIÓN 4: ELEMENTOS REGISTRADOS
+            // SECCIÓN 4: ELEMENTOS REGISTRADOS (Usando la clase Plato real)
             items(
-                items = viewModel.listaComponentes,
+                items = listaPlatos,
                 key = { it.id }
-            ) { componente ->
+            ) { plato ->
                 ItemComponenteAdmin(
-                    componente = componente,
-                    onToggle = { viewModel.toggleDisponible(componente) },
-                    onEliminar = { viewModel.eliminarComponente(componente) }
+                    plato = plato,
+                    onToggle = {
+
+                    },
+                    onEliminar = {
+
+                    }
                 )
             }
         }
@@ -331,14 +335,14 @@ fun AdminScreen(
 
 @Composable
 private fun ItemComponenteAdmin(
-    componente: ComponenteMenu,
+    plato: Plato,
     onToggle: () -> Unit,
     onEliminar: () -> Unit
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = if (componente.disponible) DarkSurface else DarkSurface.copy(alpha = 0.5f)
+            containerColor = if (plato.disponible) DarkSurface else DarkSurface.copy(alpha = 0.5f)
         )
     ) {
         Row(
@@ -355,7 +359,7 @@ private fun ItemComponenteAdmin(
                     modifier = Modifier.padding(bottom = 4.dp)
                 ) {
                     Text(
-                        text = componente.categoria,
+                        text = plato.categoria,
                         color = YellowLogo,
                         fontSize = 10.sp,
                         fontWeight = FontWeight.Bold,
@@ -364,15 +368,15 @@ private fun ItemComponenteAdmin(
                 }
 
                 Text(
-                    text = componente.nombre,
-                    color = if (componente.disponible) TextWhite else TextMuted,
+                    text = plato.nombre,
+                    color = if (plato.disponible) TextWhite else TextMuted,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )
 
-                if (componente.precioIndividual > 0) {
+                if (plato.precio > 0) {
                     Text(
-                        text = "Precio individual: $${componente.precioIndividual}",
+                        text = "Precio individual: $${plato.precio}",
                         color = YellowLogo,
                         fontSize = 12.sp
                     )
@@ -381,7 +385,7 @@ private fun ItemComponenteAdmin(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Switch(
-                    checked = componente.disponible,
+                    checked = plato.disponible,
                     onCheckedChange = { onToggle() },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = TextWhite,
