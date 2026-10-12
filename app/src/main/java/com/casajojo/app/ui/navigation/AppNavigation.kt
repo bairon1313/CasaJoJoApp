@@ -1,5 +1,6 @@
 package com.casajojo.app.ui.navigation
 
+import com.casajojo.app.ui.screens.AdminScreen
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -7,10 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-
 import com.casajojo.app.ui.screens.HomeScreen
 import com.casajojo.app.ui.screens.LoginScreen
-import com.casajojo.app.viewmodel.ClienteViewModel
 import java.net.URLEncoder
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
@@ -23,22 +22,18 @@ fun AppNavigation() {
         navController = navController,
         startDestination = "login"
     ) {
-
-//-- Registro e identificacion del cliente (RF19)
         composable("login") {
-
-                val clienteViewModel: ClienteViewModel = viewModel()
             LoginScreen(
-                clienteViewModel = clienteViewModel,
                 onNavigateToCliente = { nombre, telefono ->
+                    // Codificamos el nombre para soportar espacios y tildes
                     val nombreEncoded = URLEncoder.encode(nombre, StandardCharsets.UTF_8.toString())
                     navController.navigate("home_cliente/$nombreEncoded/$telefono")
                 },
                 onNavigateToCaja = {
-                    // Ruta para caja cuando la creen
+                    //RUTA PARA CAJA CUANDO LA CREEMOS
                 },
                 onNavigateToAdmin = {
-                    // Ruta para admin cuando la creen
+                    //RUTA PARA ADMIN CUANDO LA CREEMOS
                 }
             )
         }
@@ -75,7 +70,7 @@ fun AppNavigation() {
         }
 
         composable("admin") {
-            // Reemplazarás esto cuando crees AdminScreen()
+            // RazarAdmeen()
         }
     }
 }
