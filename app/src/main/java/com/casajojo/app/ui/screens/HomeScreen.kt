@@ -51,7 +51,7 @@ fun HomeScreen(
     Scaffold(
         containerColor = DarkBackground,
         topBar = {
-            // ENCABEZADO SUPERIOR (El que diseñó Bairon)
+            // ENCABEZADO SUPERIOR
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -148,7 +148,7 @@ fun HomeScreen(
 
                     Button(
                         onClick = onVerCarritoClick,
-                        colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary)
+                        colors = ButtonDefaults.buttonColors(containerColor = YellowLogo)
                     ) {
                         Text("Ver Carrito", color = TextWhite, fontWeight = FontWeight.Bold)
                     }
@@ -190,7 +190,7 @@ fun HomeScreen(
                 }
             }
 
-//--Modalidades de Menú (RF02)
+            //--Modalidades de Menú (RF02)
             item {
                 Text(
                     text = "Modalidad del Menú",
@@ -216,7 +216,7 @@ fun HomeScreen(
                             onClick = { menuViewModel.onTipoCombinacionChange(opcion) },
                             label = { Text(opcion.etiqueta, fontSize = 12.sp) },
                             colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = OrangePrimary,
+                                selectedContainerColor = YellowLogo,
                                 selectedLabelColor = TextWhite,
                                 containerColor = DarkSurface,
                                 labelColor = TextMuted
@@ -225,7 +225,8 @@ fun HomeScreen(
                     }
                 }
             }
-//--Platos de Fondo (si no es 'Solo Ensalada')
+
+            //--Platos de Fondo (si no es 'Solo Ensalada')
             if (estado.tipoCombinacion != OpcionMenu.SOLO_ENSALADA) {
                 item {
                     Text(
@@ -254,7 +255,7 @@ fun HomeScreen(
                 }
             }
 
-//--SECCIÓN: Acompañamientos (UNA SOLA LISTA)
+            //--SECCIÓN: Acompañamientos (UNA SOLA LISTA)
             if (estado.tipoCombinacion != OpcionMenu.SOLO_ENSALADA && estado.tipoCombinacion != OpcionMenu.DOBLE_PROTEINA) {
                 item {
                     Text(
@@ -318,13 +319,50 @@ fun HomeScreen(
                         Checkbox(
                             checked = estado.porcionDobleEnsalada,
                             onCheckedChange = { menuViewModel.onPorcionDobleEnsaladaChange(it) },
-                            colors = CheckboxDefaults.colors(checkedColor = OrangePrimary)
+                            colors = CheckboxDefaults.colors(checkedColor = YellowLogo)
                         )
                         Text("Doble porción de ensalada", color = TextWhite, fontSize = 13.sp)
                     }
                 }
             }
-//-- Restricciones de cocina (RF03)
+
+            //-- SECCIÓN: Postres (RF01)
+            if (estado.postres.isNotEmpty()) {
+                item {
+                    Text(
+                        "Postre",
+                        color = YellowLogo,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                items(estado.postres) { plato ->
+                    TarjetaComidaJoJo(
+                        plato = plato,
+                        seleccionado = estado.postre?.id == plato.id,
+                        onClick = { menuViewModel.onPostreSelect(plato) }
+                    )
+                }
+            }
+
+            //-- SECCIÓN: Bebidas (RF01)
+            if (estado.bebidas.isNotEmpty()) {
+                item {
+                    Text(
+                        "Bebida",
+                        color = YellowLogo,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                items(estado.bebidas) { plato ->
+                    TarjetaComidaJoJo(
+                        plato = plato,
+                        seleccionado = estado.bebida?.id == plato.id,
+                        onClick = { menuViewModel.onBebidaSelect(plato) }
+                    )
+                }
+            }
+
+            //-- Restricciones de cocina (RF03)
             item {
                 Text(
                     text = "Observaciones alimentarias",
@@ -338,13 +376,13 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     placeholder = {
                         Text(
-                            text = "Ej: Sin sal, aderezo aparte, alergia...",
+                            text = "Sin sal, aderezo aparte, alergia",
                             color = TextMuted,
                             fontSize = 13.sp
                         )
                     },
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = OrangePrimary,
+                        focusedBorderColor = YellowLogo,
                         unfocusedBorderColor = DarkSurface,
                         focusedTextColor = TextWhite,
                         unfocusedTextColor = TextWhite
@@ -401,7 +439,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
                     text = "+$${plato.precio}",
-                    color = if (seleccionado) OrangePrimary else YellowLogo,
+                    color = if (seleccionado) YellowLogo else YellowLogo,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
@@ -410,7 +448,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
-                        .background(if (seleccionado) OrangePrimary else DarkBackground),
+                        .background(if (seleccionado) YellowLogo else DarkBackground),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(

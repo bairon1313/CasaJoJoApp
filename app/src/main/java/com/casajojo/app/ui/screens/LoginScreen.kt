@@ -78,7 +78,7 @@ fun LoginScreen(
                 style = MaterialTheme.typography.headlineMedium.copy(
                     lineHeight = 32.sp
                 ),
-                color = OrangePrimary,
+                color = YellowLogo,
                 fontWeight = FontWeight.ExtraBold,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
@@ -105,7 +105,7 @@ fun LoginScreen(
                     Text(
                         text = "Selecciona tu perfil de acceso",
                         color = TextMuted,
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Medium
                     )
 
@@ -118,7 +118,7 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = OrangePrimary
+                            containerColor = YellowLogo
                         )
                     ) {
                         Text(
@@ -136,7 +136,7 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = OrangePrimary
+                            containerColor = YellowLogo
                         )
                     ) {
                         Text(
@@ -154,7 +154,7 @@ fun LoginScreen(
                             .fillMaxWidth()
                             .height(50.dp),
                         colors = ButtonDefaults.outlinedButtonColors(
-                            containerColor = OrangePrimary
+                            containerColor = YellowLogo
                         )
                     ) {
                         Text(
@@ -167,6 +167,7 @@ fun LoginScreen(
                 }
             }
         }
+
         // VENTANA POP-UP PARA INGRESO DE DATOS DEL CLIENTE
         if (showClienteDialog) {
             AlertDialog(
@@ -202,15 +203,15 @@ fun LoginScreen(
                             placeholder = {Text("Juan Perez", color = TextMuted)},
                             singleLine = true,
                             textStyle = TextStyle(
-                                color = OrangePrimary,
+                                color = YellowLogo,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             ),
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
+                                focusedBorderColor = YellowLogo,
                                 unfocusedBorderColor = TextMuted,
-                                focusedLabelColor = OrangePrimary,
+                                focusedLabelColor = YellowLogo,
                                 unfocusedLabelColor = TextMuted,
                                 focusedTextColor = TextWhite,
                                 unfocusedTextColor = TextWhite,
@@ -238,7 +239,7 @@ fun LoginScreen(
                             prefix = {
                                 Text(
                                     text = "+569 ",
-                                    color=OrangePrimary,
+                                    color=YellowLogo,
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
                                 )
@@ -247,15 +248,15 @@ fun LoginScreen(
                             singleLine = true,
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                             textStyle = TextStyle(
-                                color = OrangePrimary,
+                                color = YellowLogo,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
                             ),
                             modifier = Modifier.fillMaxWidth(),
                             colors = OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = OrangePrimary,
+                                focusedBorderColor = YellowLogo,
                                 unfocusedBorderColor = TextMuted,
-                                focusedLabelColor = OrangePrimary,
+                                focusedLabelColor = YellowLogo,
                                 unfocusedLabelColor = TextMuted,
                                 focusedTextColor = TextWhite,
                                 unfocusedTextColor = TextWhite,
@@ -275,7 +276,7 @@ fun LoginScreen(
                             }
 
                         },
-                        colors = ButtonDefaults.buttonColors(containerColor = OrangePrimary)
+                        colors = ButtonDefaults.buttonColors(containerColor = YellowLogo)
                     ) {
                         Text("Ingresar", color = DarkBackground, fontWeight = FontWeight.Bold)
                     }

@@ -84,59 +84,78 @@ class MenuViewModel : ViewModel() {
     //--Seleccionar fondo 1
     fun onPlatoFondo1Select(plato: Plato) {
         _estado.update {
-            it.copy(platoFondo1 = plato)
-                .let { nuevo -> nuevo.copy(precioTotal = calcularTotal(nuevo)) }
+            val nuevoPlato= if(it.platoFondo1?.id==plato.id)null else plato
+            it.copy(platoFondo1 = nuevoPlato).let { n -> n.copy(precioTotal = calcularTotal(n)) }
         }
     }
 
-    //--Seleccionar fondo 2
     fun onPlatoFondo2Select(plato: Plato) {
         _estado.update {
-            it.copy(platoFondo2 = plato)
-                .let { nuevo -> nuevo.copy(precioTotal = calcularTotal(nuevo)) }
+            val nuevoPlato = if (it.platoFondo2?.id == plato.id) null else plato
+            it.copy(platoFondo2 = nuevoPlato).let { n -> n.copy(precioTotal = calcularTotal(n)) }
         }
     }
 
-    //--Seleccionar acompanamiento 1
     fun onAcompanamiento1Select(plato: Plato) {
         _estado.update {
-            it.copy(acompanamiento1 = plato)
-                .let { nuevo -> nuevo.copy(precioTotal = calcularTotal(nuevo)) }
+            val nuevoPlato = if (it.acompanamiento1?.id == plato.id) null else plato
+            it.copy(acompanamiento1 = nuevoPlato).let { n -> n.copy(precioTotal = calcularTotal(n)) }
         }
     }
 
-    //--Seleccionar acompanamiento 2
     fun onAcompanamiento2Select(plato: Plato) {
         _estado.update {
-            it.copy(acompanamiento2 = plato)
-                .let { nuevo -> nuevo.copy(precioTotal = calcularTotal(nuevo)) }
+            val nuevoPlato = if (it.acompanamiento2?.id == plato.id) null else plato
+            it.copy(acompanamiento2 = nuevoPlato).let { n -> n.copy(precioTotal = calcularTotal(n)) }
         }
     }
 
-    //--Seleccionar ensalada
     fun onEnsaladaSelect(plato: Plato) {
         _estado.update {
-            it.copy(ensalada = plato)
-                .let { nuevo -> nuevo.copy(precioTotal = calcularTotal(nuevo)) }
+            val nuevoPlato = if (it.ensalada?.id == plato.id) null else plato
+            it.copy(ensalada = nuevoPlato).let { n -> n.copy(precioTotal = calcularTotal(n)) }
         }
     }
 
+    //-- Selección de Postres y Bebidas (RF01)
+    fun onPostreSelect(plato: Plato) {
+        _estado.update {
+            val nuevoPostre = if (it.postre?.id == plato.id) null else plato
+            it.copy(postre = nuevoPostre).let { n -> n.copy(precioTotal = calcularTotal(n)) }
+        }
+    }
 
-    //--Activar o desactivar doble porcion de ensalda
+    fun onBebidaSelect(plato: Plato) {
+        _estado.update {
+            val nuevaBebida = if (it.bebida?.id == plato.id) null else plato
+            it.copy(bebida = nuevaBebida).let { n -> n.copy(precioTotal = calcularTotal(n)) }
+        }
+    }
+
+    //-- Activar o desactivar doble porción de ensalada (RF02)
     fun onPorcionDobleEnsaladaChange(doble: Boolean) {
         _estado.update {
-            it.copy(porcionDobleEnsalada = doble)
-                .let { nuevo -> nuevo.copy(precioTotal = calcularTotal(nuevo)) }
+            it.copy(porcionDobleEnsalada = doble).let { n -> n.copy(precioTotal = calcularTotal(n)) }
         }
     }
 
-        //--Registrar especificaciones o restricciones alimentarias (RF03)
-        fun onObservacionesChange(texto: String) {
-            _estado.update { actual -> actual.copy(observacionesAlimentarias = texto)
-            }
-        }
+    //-- Registrar especificaciones alimentarias (RF03)
+    fun onObservacionesChange(texto: String) {
+        _estado.update { actual -> actual.copy(observacionesAlimentarias = texto) }
+    }
 
-        //-- Logica para calcular el costo total acumulado
+    //-- Programar hora de retiro (RF04)
+    fun onHoraRetiroChange(hora: String) {
+        _estado.update { actual -> actual.copy(horaRetiro = hora) }
+    }
+
+    //-- Modalidad Convenio Empresa (RF26)
+    fun onConvenioEmpresaChange(activo: Boolean) {
+        _estado.update { actual -> actual.copy(esConvenioEmpresa = activo) }
+    }
+
+
+        //-- Cálculo del costo total acumulado
         private fun calcularTotal(state: MenuUiState): Int {
             var total = 0
 
@@ -163,6 +182,10 @@ class MenuViewModel : ViewModel() {
                 total += if (state.porcionDobleEnsalada) ensalada.precio * 2
                 else ensalada.precio
             }
+
+            total+=state.postre?.precio ?:0
+            total+=state.bebida?.precio ?:0
+
             return total
         }
     }
