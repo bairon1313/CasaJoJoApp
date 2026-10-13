@@ -1,4 +1,4 @@
-package com.casajojo.app.ui.screens
+package com.casajojo.app.ui.screens.admin
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -28,12 +28,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.casajojo.app.R
 import com.casajojo.app.model.Plato
 import com.casajojo.app.ui.theme.*
-import com.casajojo.app.viewmodel.MenuViewModel // Importación corregida a tu estructura real
+import com.casajojo.app.viewmodel.ClienteMenuViewModel // Importación corregida a tu estructura real
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen(
-    viewModel: MenuViewModel = viewModel() // Proveemos el ViewModel de forma segura
+    viewModel: ClienteMenuViewModel = viewModel() // Proveemos el ViewModel de forma segura
 ) {
     // Observamos la lista real de platos (la minuta del día)
     val estadoMenu by viewModel.estado.collectAsState()

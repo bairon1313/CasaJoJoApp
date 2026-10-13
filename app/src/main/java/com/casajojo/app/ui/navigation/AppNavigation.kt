@@ -1,6 +1,6 @@
 package com.casajojo.app.ui.navigation
 
-import com.casajojo.app.ui.screens.AdminScreen
+import com.casajojo.app.ui.screens.admin.AdminScreen
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.casajojo.app.ui.screens.HomeScreen
-import com.casajojo.app.ui.screens.LoginScreen
+import com.casajojo.app.ui.screens.cliente.HomeScreen
+import com.casajojo.app.ui.screens.auth.LoginScreen
 import java.net.URLEncoder
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets

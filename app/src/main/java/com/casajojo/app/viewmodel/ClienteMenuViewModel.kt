@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class MenuViewModel : ViewModel() {
+class ClienteMenuViewModel : ViewModel() {
 
     //-- Estado interno mutable (mutable por el tipo de objeto dentro de la variable inmutable)
     private val _estado = MutableStateFlow(MenuUiState())

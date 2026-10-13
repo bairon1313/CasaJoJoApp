@@ -1,4 +1,4 @@
-package com.casajojo.app.ui.screens
+package com.casajojo.app.ui.screens.cliente
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -34,7 +34,7 @@ import com.casajojo.app.R
 import com.casajojo.app.model.OpcionMenu
 import com.casajojo.app.model.Plato
 import com.casajojo.app.ui.theme.*
-import com.casajojo.app.viewmodel.MenuViewModel
+import com.casajojo.app.viewmodel.ClienteMenuViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +43,7 @@ fun HomeScreen(
     telefonoCliente: String,
     onVerCarritoClick: () -> Unit,
     cantidadProductosCarrito: Int = 0,
-    menuViewModel: MenuViewModel = viewModel() // Conectamos el ViewModel
+    menuViewModel: ClienteMenuViewModel = viewModel() // Conectamos el ViewModel
 ) {
     // Observamos el estado reactivo del menú
     val estado by menuViewModel.estado.collectAsState()

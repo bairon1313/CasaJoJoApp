@@ -1,4 +1,4 @@
-package com.casajojo.app.ui.screens
+package com.casajojo.app.ui.screens.auth
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

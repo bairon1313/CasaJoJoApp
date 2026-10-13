@@ -1,4 +1,4 @@
-package com.casajojo.app.ui.screens
+package com.casajojo.app.ui.screens.cliente
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,13 +11,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 import com.casajojo.app.viewmodel.ClienteViewModel
-import com.casajojo.app.viewmodel.MenuViewModel
+import com.casajojo.app.viewmodel.ClienteMenuViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CarritoScreen(
     clienteViewModel: ClienteViewModel,
-    menuViewModel: MenuViewModel,
+    menuViewModel: ClienteMenuViewModel,
     onVolverClick: () -> Unit) {
 
 //-- Estados reactivos en tiempo real
