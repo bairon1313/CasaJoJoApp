@@ -7,6 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.casajojo.app.ui.screens.operador.CajaScreen
 import androidx.navigation.navArgument
 import com.casajojo.app.ui.screens.cliente.HomeScreen
 import com.casajojo.app.ui.screens.auth.LoginScreen
@@ -30,7 +31,7 @@ fun AppNavigation() {
                     navController.navigate("home_cliente/$nombreEncoded/$telefono")
                 },
                 onNavigateToCaja = {
-                    //RUTA PARA CAJA CUANDO LA CREEMOS
+                    navController.navigate("caja")
                 },
                 onNavigateToAdmin = {
                     navController.navigate("admin")
@@ -66,7 +67,7 @@ fun AppNavigation() {
         }
 
         composable("caja") {
-            // Reemplazarás esto cuando crees CajaScreen()
+            CajaScreen()
         }
 
         composable("admin") {
