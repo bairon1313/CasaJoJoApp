@@ -217,25 +217,65 @@ fun HomeScreen(
                 }
             }
 
-            // Platos de Fondo
+            // =========================================================================
+            // SECCIÓN: PROTEÍNAS Y PLATOS DE FONDO (INDEPENDIENTES)
+            // =========================================================================
             if (estado.tipoCombinacion != OpcionMenu.SOLO_ENSALADA) {
-                item {
-                    Text(
-                        if (estado.tipoCombinacion == OpcionMenu.DOBLE_PROTEINA) "Proteína 1" else "Plato de Fondo",
-                        color = YellowLogo,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-                items(estado.fondos) { plato ->
-                    TarjetaComidaJoJo(
-                        plato = plato,
-                        seleccionado = estado.platoFondo1?.id == plato.id,
-                        onClick = { menuViewModel.onPlatoFondo1Select(plato) }
-                    )
+
+                // --- 1. SECCIÓN DE PROTEÍNAS  ---
+                if (estado.proteinas.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Proteínas",
+                            color = YellowLogo,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 4.dp)
+                        )
+                    }
+                    items(estado.proteinas) { plato ->
+                        TarjetaComidaJoJo(
+                            plato = plato,
+                            seleccionado = estado.proteina?.id == plato.id, // VINCULADO A PROTEINA
+                            onClick = { menuViewModel.onProteinaSelect(plato) } // LLAMA A ONPROTEINASELECT
+                        )
+                    }
                 }
 
-                if (estado.tipoCombinacion == OpcionMenu.DOBLE_PROTEINA) {
-                    item { Text("Proteína 2", color = YellowLogo, fontWeight = FontWeight.Bold) }
+                // --- 2. SECCIÓN DE PLATOS DE FONDO  ---
+                if (estado.fondos.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = if (estado.tipoCombinacion == OpcionMenu.DOBLE_PROTEINA)
+                                "Plato de Fondo 1"
+                            else
+                                "Plato de Fondo",
+                            color = YellowLogo,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
+                    items(estado.fondos) { plato ->
+                        TarjetaComidaJoJo(
+                            plato = plato,
+                            seleccionado = estado.platoFondo1?.id == plato.id, // VINCULADO A PLATOFONDO1
+                            onClick = { menuViewModel.onPlatoFondo1Select(plato) } // LLAMA A ONPLATOFONDO1SELECT
+                        )
+                    }
+                }
+
+                // --- 3. SEGUNDO PLATO DE FONDO  ---
+                if (estado.tipoCombinacion == OpcionMenu.DOBLE_PROTEINA && estado.fondos.isNotEmpty()) {
+                    item {
+                        Text(
+                            text = "Plato de Fondo 2",
+                            color = YellowLogo,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
+                    }
                     items(estado.fondos) { plato ->
                         TarjetaComidaJoJo(
                             plato = plato,

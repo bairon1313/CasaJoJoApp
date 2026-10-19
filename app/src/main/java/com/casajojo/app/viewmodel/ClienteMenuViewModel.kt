@@ -28,17 +28,28 @@ class ClienteMenuViewModel : ViewModel() {
         )
 
     init {
-        // Escucha en tiempo real los cambios del Admin en MenuRepository
         viewModelScope.launch {
             MenuRepository.platos.collect { lista ->
                 val disponibles = lista.filter { it.disponible }
-                // Solo actualizamos menuDelDia; los getters de tu MenuUiState filtran el resto automáticamente
                 _estado.value = _estado.value.copy(
                     menuDelDia = disponibles
                 )
                 recalcularTotal()
             }
         }
+    }
+
+    fun onProteinaSelect(plato: Plato) {
+        val actual = _estado.value.proteina
+        _estado.value = _estado.value.copy(
+            proteina = if (actual?.id == plato.id) null else plato
+        )
+        recalcularTotal()
+    }
+
+    fun removerProteina() {
+        _estado.value = _estado.value.copy(proteina = null)
+        recalcularTotal()
     }
 
     fun onTipoCombinacionChange(opcion: OpcionMenu) {
@@ -97,9 +108,64 @@ class ClienteMenuViewModel : ViewModel() {
         _estado.value = _estado.value.copy(observacionesAlimentarias = texto)
     }
 
+    // Funciones para eliminar ítems específicos desde el Carrito
+    fun removerPlatoFondo1() {
+        _estado.value = _estado.value.copy(platoFondo1 = null)
+        recalcularTotal()
+    }
+
+    fun removerPlatoFondo2() {
+        _estado.value = _estado.value.copy(platoFondo2 = null)
+        recalcularTotal()
+    }
+
+    fun removerAcompanamiento1() {
+        _estado.value = _estado.value.copy(acompanamiento1 = null)
+        recalcularTotal()
+    }
+
+    fun removerAcompanamiento2() {
+        _estado.value = _estado.value.copy(acompanamiento2 = null)
+        recalcularTotal()
+    }
+
+    fun removerEnsalada() {
+        _estado.value = _estado.value.copy(ensalada = null)
+        recalcularTotal()
+    }
+
+    fun removerPostre() {
+        _estado.value = _estado.value.copy(postre = null)
+        recalcularTotal()
+    }
+
+    fun removerBebida() {
+        _estado.value = _estado.value.copy(bebida = null)
+        recalcularTotal()
+    }
+
+    fun vaciarCarrito() {
+        _estado.value = _estado.value.copy(
+            proteina = null,
+            platoFondo1 = null,
+            platoFondo2 = null,
+            acompanamiento1 = null,
+            acompanamiento2 = null,
+            ensalada = null,
+            porcionDobleEnsalada = false,
+            postre = null,
+            bebida = null,
+            observacionesAlimentarias = "",
+            precioTotal = 0
+        )
+    }
+
     private fun recalcularTotal() {
         val e = _estado.value
         var suma = 0
+
+        // Suma proteína si está seleccionada
+        e.proteina?.let { suma += it.precio }
 
         if (e.tipoCombinacion != OpcionMenu.SOLO_ENSALADA) {
             e.platoFondo1?.let { suma += it.precio }
