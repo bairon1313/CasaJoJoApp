@@ -26,6 +26,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.casajojo.app.data.repository.PedidoRepository
+import com.casajojo.app.model.EstadoPedido
+import com.casajojo.app.model.Pedido
 import com.casajojo.app.model.Plato
 import com.casajojo.app.ui.theme.*
 import com.casajojo.app.viewmodel.ClienteMenuViewModel
@@ -130,6 +133,31 @@ fun CarritoScreen(
             errorHoraMensaje = "El carrito está vacío. Agrega productos para realizar el pedido."
             return
         }
+
+        // 1. Recopilar platos seleccionados
+        val itemsSeleccionados = listOfNotNull(
+            estadoMenu.proteina,
+            estadoMenu.platoFondo1,
+            estadoMenu.platoFondo2,
+            estadoMenu.acompanamiento1,
+            estadoMenu.acompanamiento2,
+            estadoMenu.ensalada,
+            estadoMenu.postre,
+            estadoMenu.bebida
+        )
+
+        // 2. Crear comanda
+        val nuevoPedido = Pedido(
+            nombreCliente = estadoCliente.nombre,
+            telefonoCliente = estadoCliente.telefono,
+            platosSeleccionados = itemsSeleccionados,
+            observaciones = estadoMenu.observacionesAlimentarias,
+            horaRetiro = horaRetiro,
+            estado = EstadoPedido.RECIBIDO
+        )
+
+        // 3. Enviar al repositorio compartido
+        PedidoRepository.agregarPedido(nuevoPedido)
 
         errorHoraMensaje = null
         mostrarDialogoExito = true
@@ -287,7 +315,7 @@ fun CarritoScreen(
                 }
             }
 
-            // SECCIÓN 2: DATOS DEL CLIENTE Y HORA DE RETIRO (RF04)
+            // SECCIÓN 2: DATOS DEL CLIENTE Y HORA DE RETIRO
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -353,7 +381,7 @@ fun CarritoScreen(
                         )
                     )
 
-                    // Campo interactivo para selección de hora con diálogo nativo
+                    // Campo interactivo para selección de hora
                     Box(modifier = Modifier.fillMaxWidth()) {
                         OutlinedTextField(
                             value = if (horaRetiro.isBlank()) "" else "$horaRetiro hrs",
@@ -381,7 +409,7 @@ fun CarritoScreen(
                             )
                         )
 
-                        // Superposición transparente para capturar el click y abrir el TimePicker
+                        // Superposición transparente para abrir el TimePicker
                         Box(
                             modifier = Modifier
                                 .matchParentSize()

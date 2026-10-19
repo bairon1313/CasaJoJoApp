@@ -9,9 +9,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.casajojo.app.ui.screens.admin.AdminScreen
 import com.casajojo.app.ui.screens.auth.LoginScreen
+import com.casajojo.app.ui.screens.caja.CajaScreen // <-- Importación corregida a .caja.CajaScreen
 import com.casajojo.app.ui.screens.cliente.CarritoScreen
 import com.casajojo.app.ui.screens.cliente.HomeScreen
-import com.casajojo.app.ui.screens.operador.CajaScreen
 import com.casajojo.app.viewmodel.ClienteMenuViewModel
 import com.casajojo.app.viewmodel.ClienteViewModel
 import java.net.URLDecoder
@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets
 fun AppNavigation() {
     val navController = rememberNavController()
 
-    // Instancias compartidas para que HomeScreen y CarritoScreen lean la misma comanda
+    // Instancias compartidas para sincronizar comanda entre cliente y carrito
     val clienteViewModel: ClienteViewModel = viewModel()
     val clienteMenuViewModel: ClienteMenuViewModel = viewModel()
 
@@ -30,10 +30,10 @@ fun AppNavigation() {
         navController = navController,
         startDestination = "login"
     ) {
+        // RUTA 1: LOGIN
         composable("login") {
             LoginScreen(
                 onNavigateToCliente = { nombre, telefono ->
-                    // Codificamos el nombre para soportar espacios y tildes
                     val nombreEncoded = URLEncoder.encode(nombre, StandardCharsets.UTF_8.toString())
                     navController.navigate("home_cliente/$nombreEncoded/$telefono")
                 },
@@ -46,7 +46,7 @@ fun AppNavigation() {
             )
         }
 
-        // MENÚ DEL CLIENTE (HOME)
+        // RUTA 2: MENÚ DEL CLIENTE (HOME)
         composable(
             route = "home_cliente/{nombre}/{telefono}",
             arguments = listOf(
@@ -54,12 +54,10 @@ fun AppNavigation() {
                 navArgument("telefono") { type = NavType.StringType }
             )
         ) { backStackEntry ->
-            // Decodificamos los datos recibidos
             val nombreRaw = backStackEntry.arguments?.getString("nombre") ?: ""
             val nombreDecoded = URLDecoder.decode(nombreRaw, StandardCharsets.UTF_8.toString())
             val telefono = backStackEntry.arguments?.getString("telefono") ?: ""
 
-            // Sincronizamos los datos del cliente ingresados con su ViewModel
             clienteViewModel.onNombreChange(nombreDecoded)
             clienteViewModel.onTelefonoChange(telefono)
 
@@ -73,6 +71,7 @@ fun AppNavigation() {
             )
         }
 
+        // RUTA 3: CARRITO DE COMPRA
         composable("carrito") {
             CarritoScreen(
                 clienteViewModel = clienteViewModel,
@@ -81,10 +80,14 @@ fun AppNavigation() {
             )
         }
 
+        // RUTA 4: OPERADOR DE CAJA
         composable("caja") {
-            CajaScreen()
+            CajaScreen(
+                onVolverClick = { navController.popBackStack() }
+            )
         }
 
+        // RUTA 5: ADMINISTRADOR
         composable("admin") {
             AdminScreen(viewModel = viewModel())
         }
