@@ -42,7 +42,8 @@ fun AdminScreen(
     var descripcionComponente by remember { mutableStateOf("") }
     var precioComponente by remember { mutableStateOf("") }
 
-    val categorias = listOf("FONDO", "ACOMPAÑAMIENTO", "ENSALADA", "POSTRE", "BEBIDA")
+    // Agregada la categoría PROTEINA a la lista
+    val categorias = listOf("PROTEINA", "FONDO", "ACOMPAÑAMIENTO", "ENSALADA", "POSTRE", "BEBIDA")
     var categoriaSeleccionada by remember { mutableStateOf(categorias.first()) }
 
     var errorMensaje by remember { mutableStateOf<String?>(null) }
@@ -52,7 +53,8 @@ fun AdminScreen(
     var nuevoPrecioInput by remember { mutableStateOf("4500") }
 
     val ejemploPlaceholder = when (categoriaSeleccionada) {
-        "FONDO" -> "Pollo al horno, Carne mechada, Chuleta"
+        "PROTEINA" -> "Pollo al horno, Carne mechada, Chuleta, Pescado"
+        "FONDO" -> "Cazuela, Porotos con riendas, Guiso"
         "ACOMPAÑAMIENTO" -> "Puré de papas, Arroz primaveral, Papas fritas"
         "ENSALADA" -> "Ensalada chilena, Tomate mayo, Mix verde"
         "POSTRE" -> "Leche asada, Flan de vainilla, Jalea"
