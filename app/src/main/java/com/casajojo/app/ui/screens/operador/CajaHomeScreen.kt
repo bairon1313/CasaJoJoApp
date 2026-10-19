@@ -1,6 +1,9 @@
 package com.casajojo.app.ui.screens.caja
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,7 +20,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -101,6 +106,7 @@ fun TarjetaPedidoCaja(
     pedido: Pedido,
     onMarcarListo: () -> Unit
 ) {
+    val context = LocalContext.current
     val esListo = pedido.estado == EstadoPedido.LISTO || pedido.estado == EstadoPedido.ENTREGADO
     val totalCalculado = pedido.platosSeleccionados.sumOf { it.precio }
 
@@ -176,18 +182,31 @@ fun TarjetaPedidoCaja(
 
             Spacer(modifier = Modifier.height(4.dp))
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            // RECURSO NATIVO 2: Intent del Marcador de Llamadas Nativas
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .clickable {
+                        if (pedido.telefonoCliente.isNotBlank()) {
+                            val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${pedido.telefonoCliente}"))
+                            context.startActivity(intent)
+                        }
+                    }
+                    .padding(vertical = 2.dp)
+            ) {
                 Icon(
                     imageVector = Icons.Default.Phone,
-                    contentDescription = null,
-                    tint = TextMuted,
+                    contentDescription = "Llamar cliente",
+                    tint = YellowLogo,
                     modifier = Modifier.size(16.dp)
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = pedido.telefonoCliente,
-                    color = TextMuted,
-                    fontSize = 13.sp
+                    text = "${pedido.telefonoCliente}  (Llamar)",
+                    color = YellowLogo,
+                    fontSize = 13.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
 
