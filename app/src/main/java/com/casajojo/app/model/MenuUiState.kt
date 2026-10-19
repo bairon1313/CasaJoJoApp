@@ -20,7 +20,10 @@ data class MenuUiState(
         get() = menuDelDia.filter { it.categoria.equals("FONDO", ignoreCase = true) }
 
     val acompanamientos: List<Plato>
-        get() = menuDelDia.filter { it.categoria.equals("ACOMPAÑAMIENTO", ignoreCase = true) }
+        get() = menuDelDia.filter {
+            it.categoria.equals("ACOMPAÑAMIENTO", ignoreCase = true) ||
+                    it.categoria.equals("ACOMPANAMIENTO", ignoreCase = true)
+        }
 
     val ensaladas: List<Plato>
         get() = menuDelDia.filter { it.categoria.equals("ENSALADA", ignoreCase = true) }

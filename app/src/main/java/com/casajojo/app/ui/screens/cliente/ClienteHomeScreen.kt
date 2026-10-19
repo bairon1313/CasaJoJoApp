@@ -43,15 +43,13 @@ fun HomeScreen(
     telefonoCliente: String,
     onVerCarritoClick: () -> Unit,
     cantidadProductosCarrito: Int = 0,
-    menuViewModel: ClienteMenuViewModel = viewModel() // Conectamos el ViewModel
+    menuViewModel: ClienteMenuViewModel = viewModel()
 ) {
-    // Observamos el estado reactivo del menú
     val estado by menuViewModel.estado.collectAsState()
 
     Scaffold(
         containerColor = DarkBackground,
         topBar = {
-            // ENCABEZADO SUPERIOR
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -60,7 +58,6 @@ fun HomeScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // LOGO
                 Box(
                     modifier = Modifier
                         .size(44.dp)
@@ -78,7 +75,6 @@ fun HomeScreen(
                     )
                 }
 
-                // TÍTULO
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(
                         text = "Menú del Día",
@@ -88,7 +84,6 @@ fun HomeScreen(
                     )
                 }
 
-                // BOTÓN CARRITO
                 IconButton(
                     onClick = onVerCarritoClick,
                     modifier = Modifier
@@ -121,7 +116,6 @@ fun HomeScreen(
                 }
             }
         },
-        // BARRA INFERIOR FIJA CON TOTAL A PAGAR Y BOTÓN
         bottomBar = {
             Surface(
                 color = DarkSurface,
@@ -155,10 +149,8 @@ fun HomeScreen(
                 }
             }
         }
-    )
-    { paddingValues ->
+    ) { paddingValues ->
 
-        // Usamos LazyColumn para que la lista de platos pueda deslizarse fluidamente
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -166,7 +158,6 @@ fun HomeScreen(
                 .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            //Tarjeta de bienvenida personalizada
             item {
                 Spacer(modifier = Modifier.height(4.dp))
                 Card(
@@ -190,7 +181,7 @@ fun HomeScreen(
                 }
             }
 
-            //--Modalidades de Menú (RF02)
+            // Modalidades de Menú
             item {
                 Text(
                     text = "Modalidad del Menú",
@@ -226,7 +217,7 @@ fun HomeScreen(
                 }
             }
 
-            //--Platos de Fondo (si no es 'Solo Ensalada')
+            // Platos de Fondo
             if (estado.tipoCombinacion != OpcionMenu.SOLO_ENSALADA) {
                 item {
                     Text(
@@ -255,7 +246,7 @@ fun HomeScreen(
                 }
             }
 
-            //--SECCIÓN: Acompañamientos (UNA SOLA LISTA)
+            // Acompañamientos
             if (estado.tipoCombinacion != OpcionMenu.SOLO_ENSALADA && estado.tipoCombinacion != OpcionMenu.DOBLE_PROTEINA) {
                 item {
                     Text(
@@ -290,11 +281,10 @@ fun HomeScreen(
                 }
             }
 
-
-            // 5. Ensaladas
+            // Ensaladas
             item {
                 Text(
-                    "Ensalda",
+                    "Ensalada",
                     color = YellowLogo,
                     fontWeight = FontWeight.Bold
                 )
@@ -306,7 +296,7 @@ fun HomeScreen(
                     onClick = { menuViewModel.onEnsaladaSelect(plato) }
                 )
             }
-            // Opción de Doble Ensalada (RF02)
+
             item {
                 Card(
                     colors = CardDefaults.cardColors(containerColor = DarkSurface),
@@ -326,7 +316,7 @@ fun HomeScreen(
                 }
             }
 
-            //-- SECCIÓN: Postres (RF01)
+            // Postres
             if (estado.postres.isNotEmpty()) {
                 item {
                     Text(
@@ -344,7 +334,7 @@ fun HomeScreen(
                 }
             }
 
-            //-- SECCIÓN: Bebidas (RF01)
+            // Bebidas
             if (estado.bebidas.isNotEmpty()) {
                 item {
                     Text(
@@ -362,7 +352,7 @@ fun HomeScreen(
                 }
             }
 
-            //-- Restricciones de cocina (RF03)
+            // Observaciones
             item {
                 Text(
                     text = "Observaciones alimentarias",
@@ -394,70 +384,68 @@ fun HomeScreen(
     }
 }
 
-
-    //
-    @Composable
-    fun TarjetaComidaJoJo(
-        plato: Plato,
-        seleccionado: Boolean,
-        onClick: () -> Unit
+@Composable
+fun TarjetaComidaJoJo(
+    plato: Plato,
+    seleccionado: Boolean,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = if (seleccionado) DarkSurface.copy(alpha = 0.95f) else DarkSurface
+        ),
+        border = if (seleccionado) BorderStroke(1.5.dp, OrangePrimary) else null,
+        shape = RoundedCornerShape(10.dp)
     ) {
-        Card(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onClick() },
-            colors = CardDefaults.cardColors(
-                containerColor = if (seleccionado) DarkSurface.copy(alpha = 0.95f) else DarkSurface
-            ),
-            border = if (seleccionado) BorderStroke(1.5.dp, OrangePrimary) else null,
-            shape = RoundedCornerShape(10.dp)
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 14.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = plato.nombre,
-                        color = if (seleccionado) YellowLogo else TextWhite,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    )
-                    if (plato.descripcion.isNotBlank()) {
-                        Spacer(modifier = Modifier.height(2.dp))
-                        Text(
-                            text = plato.descripcion,
-                            color = TextMuted,
-                            fontSize = 11.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis
-                        )
-                    }
-                }
-                Spacer(modifier = Modifier.width(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "+$${plato.precio}",
-                    color = if (seleccionado) YellowLogo else YellowLogo,
+                    text = plato.nombre,
+                    color = if (seleccionado) YellowLogo else TextWhite,
                     fontWeight = FontWeight.Bold,
                     fontSize = 14.sp
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Box(
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(if (seleccionado) YellowLogo else DarkBackground),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (seleccionado) Icons.Default.Check else Icons.Default.Add,
-                        contentDescription = if (seleccionado) "Seleccionado" else "Agregar",
-                        tint = if (seleccionado) TextWhite else TextMuted,
-                        modifier = Modifier.size(16.dp)
+                if (plato.descripcion.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = plato.descripcion,
+                        color = TextMuted,
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
             }
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = "+$${plato.precio}",
+                color = YellowLogo,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.width(12.dp))
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(if (seleccionado) YellowLogo else DarkBackground),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = if (seleccionado) Icons.Default.Check else Icons.Default.Add,
+                    contentDescription = if (seleccionado) "Seleccionado" else "Agregar",
+                    tint = if (seleccionado) TextWhite else TextMuted,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
+}

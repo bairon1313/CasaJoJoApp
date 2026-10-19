@@ -28,18 +28,18 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.casajojo.app.R
 import com.casajojo.app.model.Plato
 import com.casajojo.app.ui.theme.*
-import com.casajojo.app.viewmodel.ClienteMenuViewModel // Importación corregida a tu estructura real
+import com.casajojo.app.viewmodel.AdminViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminScreen(
-    viewModel: ClienteMenuViewModel = viewModel() // Proveemos el ViewModel de forma segura
+    viewModel: AdminViewModel = viewModel()
 ) {
-    // Observamos la lista real de platos (la minuta del día)
-    val estadoMenu by viewModel.estado.collectAsState()
-    val listaPlatos = estadoMenu.menuDelDia
+    // Observamos la lista reactiva centralizada en MenuRepository
+    val listaPlatos by viewModel.listaPlatos.collectAsState()
 
     var nombreComponente by remember { mutableStateOf("") }
+    var descripcionComponente by remember { mutableStateOf("") }
     var precioComponente by remember { mutableStateOf("") }
 
     val categorias = listOf("FONDO", "ACOMPAÑAMIENTO", "ENSALADA", "POSTRE", "BEBIDA")
@@ -47,11 +47,10 @@ fun AdminScreen(
 
     var errorMensaje by remember { mutableStateOf<String?>(null) }
 
-    // Variables locales para simular el estado del "Combo del Día" por ahora (hasta implementarlo en ViewModel)
+    // Estado local para la opción de Combo
     var menuDelDiaActivo by remember { mutableStateOf(true) }
     var nuevoPrecioInput by remember { mutableStateOf("4500") }
 
-    // EJEMPLOS DINÁMICOS SEGÚN CATEGORÍA (alineado a las categorías de la clase Plato)
     val ejemploPlaceholder = when (categoriaSeleccionada) {
         "FONDO" -> "Pollo al horno, Carne mechada, Chuleta"
         "ACOMPAÑAMIENTO" -> "Puré de papas, Arroz primaveral, Papas fritas"
@@ -175,9 +174,7 @@ fun AdminScreen(
                                 )
 
                                 Button(
-                                    onClick = {
-
-                                    },
+                                    onClick = { /* Actualización de precio combo si aplica */ },
                                     colors = ButtonDefaults.buttonColors(
                                         containerColor = YellowLogo,
                                         contentColor = DarkBackground
@@ -220,6 +217,7 @@ fun AdminScreen(
                                     onClick = {
                                         categoriaSeleccionada = cat
                                         nombreComponente = ""
+                                        descripcionComponente = ""
                                         precioComponente = ""
                                         errorMensaje = null
                                     },
@@ -234,6 +232,7 @@ fun AdminScreen(
                             }
                         }
 
+                        // Campo Nombre
                         OutlinedTextField(
                             value = nombreComponente,
                             onValueChange = { nombreComponente = it },
@@ -251,6 +250,25 @@ fun AdminScreen(
                             )
                         )
 
+                        // Campo Descripción
+                        OutlinedTextField(
+                            value = descripcionComponente,
+                            onValueChange = { descripcionComponente = it },
+                            label = { Text("Descripción (Opcional)") },
+                            placeholder = { Text("Ej: Acompañado de arroz graneado", color = TextMuted) },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth(),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = YellowLogo,
+                                unfocusedBorderColor = TextMuted,
+                                focusedLabelColor = YellowLogo,
+                                unfocusedLabelColor = TextMuted,
+                                focusedTextColor = TextWhite,
+                                unfocusedTextColor = TextWhite
+                            )
+                        )
+
+                        // Campo Precio
                         OutlinedTextField(
                             value = precioComponente,
                             onValueChange = { entrada ->
@@ -283,9 +301,14 @@ fun AdminScreen(
                                 } else if (precioInt == null || precioInt <= 0) {
                                     errorMensaje = "Ingresa un precio individual válido."
                                 } else {
-
-                                    // viewModel.agregarPlato(nombreComponente, categoriaSeleccionada, precioInt)
+                                    viewModel.agregarPlato(
+                                        nombre = nombreComponente.trim(),
+                                        descripcion = descripcionComponente.ifBlank { "Opción de la minuta" }.trim(),
+                                        precio = precioInt,
+                                        categoria = categoriaSeleccionada
+                                    )
                                     nombreComponente = ""
+                                    descripcionComponente = ""
                                     precioComponente = ""
                                     errorMensaje = null
                                 }
@@ -314,19 +337,15 @@ fun AdminScreen(
                 )
             }
 
-            // SECCIÓN 4: ELEMENTOS REGISTRADOS (Usando la clase Plato real)
+            // SECCIÓN 4: ELEMENTOS REGISTRADOS
             items(
                 items = listaPlatos,
                 key = { it.id }
             ) { plato ->
                 ItemComponenteAdmin(
                     plato = plato,
-                    onToggle = {
-
-                    },
-                    onEliminar = {
-
-                    }
+                    onToggle = { viewModel.toggleDisponibilidad(plato.id) },
+                    onEliminar = { viewModel.eliminarPlato(plato.id) }
                 )
             }
         }
@@ -374,11 +393,20 @@ private fun ItemComponenteAdmin(
                     fontSize = 15.sp
                 )
 
+                if (plato.descripcion.isNotBlank()) {
+                    Text(
+                        text = plato.descripcion,
+                        color = TextMuted,
+                        fontSize = 12.sp
+                    )
+                }
+
                 if (plato.precio > 0) {
                     Text(
                         text = "Precio individual: $${plato.precio}",
                         color = YellowLogo,
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.SemiBold
                     )
                 }
             }
