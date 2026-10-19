@@ -26,13 +26,22 @@ class ClienteViewModel : ViewModel() {
 
 //-- Actualiza el texto de la razon social (para el Checkbox)
     fun onEsPerfilEmpresaChange(valor: Boolean) {
-        _estado.update { it.copy(esPerfilEmpresa = valor) }
+        _estado.update { it.copy(
+            esPerfilEmpresa = valor,
+            errores = if (!valor) it.errores.copy(nombreEmpresa = null) else it.errores
+            )
+        }
     }
 
 //-- Alterna la seccion de perfil Empresa
-    fun onNombreEmpresaChange(valor: Boolean) {
-        _estado.update {it.copy(esPerfilEmpresa = valor,
-            errores = if (!valor) it.errores.copy(nombreEmpresa = null) else it.errores)} }
+    fun onNombreEmpresaChange(valor: String) {
+        _estado.update {
+            it.copy(
+                nombreEmpresa = valor,
+                errores =  it.errores.copy(nombreEmpresa = null)
+            )
+        }
+    }
 
 //-- Validacion de negocio RF19 --
     fun validarFormulario(): Boolean{
