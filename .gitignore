@@ -1,15 +1,44 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+
+# =========================================
+# ANDROID - KOTLIN
+# =========================================
+.gradle/
+.kotlin/
+build/
+captures/
+.externalNativeBuild/
+.cxx/
 local.properties
+
+# =========================================
+# BACKEND - SPRING BOOT / MAVEN
+# =========================================
+target/
+*.class
+*.log
+
+# =========================================
+# CONFIGURACION DE IDE
+# =========================================
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# =========================================
+# SEGURIDAD Y CONFIGURACION LOCAL
+# =========================================
+.env
+.env.*
+!.env.example
+application-local.properties
+application-local.yml
+keystore.properties
+
+# =========================================
+# ARCHIVOS DEL SISTEMA OPERATIVO
+# =========================================
+.DS_Store
+Thumbs.db
